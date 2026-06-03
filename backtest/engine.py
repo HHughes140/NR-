@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from NR.config import (
-    BacktestConfig, DataConfig, OptimizationConfig, MacroConfig, SentimentConfig,
+    BacktestConfig, DataConfig, OptimizationConfig, MacroConfig,
     BayesianConfig,
 )
 from NR.backtest.transaction_costs import TransactionCostModel
