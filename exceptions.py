@@ -33,6 +33,10 @@ class FREDError(MacroDataError):
     """FRED API request failed."""
 
 
+class InsuranceDataError(MacroDataError):
+    """Insurance fundamental data fetch or computation failed."""
+
+
 class SentimentError(PortfolioModelError):
     """Sentiment analysis failed."""
 

@@ -503,6 +503,62 @@ class BacktestConfig:
 
 
 @dataclass
+class InsuranceFactorConfig:
+    """Configuration for insurance fundamental factor model.
+
+    Controls which fundamentals to extract from quarterly financials,
+    how to handle missing data, and regression parameters.
+    """
+    # Default insurance universe (major US insurers)
+    default_tickers: tuple = (
+        "PGR", "ALL", "TRV", "CB", "AIG", "MET", "AFL", "HIG",
+        "CINF", "WRB", "GL", "AIZ", "BRK-B", "L", "RE",
+        "RNR", "ERIE", "ACGL", "AJG", "BRO", "MMC", "AON",
+    )
+
+    # Factor selection -- which insurance fundamentals to include
+    factors_enabled: tuple = (
+        "loss_ratio",
+        "lae_ratio",
+        "expense_ratio",
+        "combined_ratio",
+        "premium_growth_yoy",
+        "investment_yield",
+        "reserve_ratio",
+        "leverage_ratio",
+        "roe",
+        "book_value_growth",
+        "operating_margin",
+        "investment_to_assets",
+    )
+
+    # Data handling
+    min_quarters: int = 4          # require at least 4 quarters of data
+    min_tickers: int = 6           # min universe size for cross-sectional regression
+    cross_sectional_zscore: bool = True  # z-score factors across universe each day
+    winsorize_pct: float = 0.025   # winsorize at 2.5% / 97.5%
+
+    # Regression
+    regression_mode: str = "cross_sectional"  # "cross_sectional" or "time_series"
+    min_observations: int = 60     # minimum daily observations for regression
+
+    # Data fetch
+    fetch_period: str = "5y"       # yfinance period for price data
+    chunk_size: int = 10
+    max_retries: int = 3
+
+    def validate(self):
+        _check(self.min_quarters >= 2, "min_quarters must be >= 2")
+        _check(self.min_tickers >= 3, "min_tickers must be >= 3")
+        _check(0 <= self.winsorize_pct < 0.25,
+               "winsorize_pct must be in [0, 0.25)")
+        _check(self.regression_mode in ("cross_sectional", "time_series"),
+               f"Unknown regression_mode: {self.regression_mode}")
+        _check(self.min_observations >= 30,
+               "min_observations must be >= 30")
+
+
+@dataclass
 class TradingConfig:
     enabled: bool = True
     cost_method: str = "average"
